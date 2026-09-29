@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Superstore EDA · Sergio Castillo</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="site">
+<div class="wrap">
+<p class="brand"><a href="../../index.html">Sergio Castillo</a></p>
+<nav aria-label="Main"><a href="../../index.html">Home</a> <a href="../../projects/late-deliveries/index.html">Late Deliveries (Olist)</a> <a href="../../projects/nyc-airbnb/index.html">NYC Airbnb 2019</a> <a href="../../projects/superstore/index.html" aria-current="page">Superstore EDA</a></nav>
+</div>
+</header>
+<main class="wrap">
+<h1>Superstore EDA</h1>
+<p class="links"><a href="index.html">Project page</a> · <a href="notebook.html">Rendered notebook</a> · <a href="superstore_eda.ipynb" download>Download .ipynb</a></p>
+<h2>Question</h2>
+<p>Where does Superstore lose profit (sub-category, discount level, region × segment, ship mode), and what would capping discounts at 20% have changed?</p>
+
+<h2>Data</h2>
+<p><a href="https://www.kaggle.com/datasets/vivek468/superstore-dataset-final">Superstore Dataset</a> (Kaggle). 9994 order lines × 21 columns (US only), 5009 orders, 793 customers. Read with latin-1 encoding because the CSV has non-UTF-8 bytes.</p>
+<h2>Methods and tools</h2>
+<p class="tools">Python, pandas, matplotlib</p>
+<ul><li>Sanity checks: describe(), discount levels, quantity range, negative-profit rows (1871), zero sales (0), duplicate Row IDs (0).</li><li>Derived ship days, profit margin and discount bins (0%, 1–20%, 21–30%, 31–50%, 51–80%) with <code>pd.cut</code>.</li><li>Grouped sales/profit/margin by sub-category × discount bin, sub-category, region × segment and ship mode.</li><li>Charts: net profit by sub-category; profit by discount bin for Binders, Tables, Appliances and Machines.</li><li>Counterfactual: recomputed each line’s list price, capped discount at 20%, kept cost fixed, and compared total profit.</li></ul>
+<h2>Key findings</h2>
+<ul><li>Three sub-categories lose money overall: Tables −17725.4811, Bookcases −3472.5560, Supplies −1189.0995. The largest profits are Copiers 55617.8249, Phones 44515.7306 and Accessories 41936.6357.</li><li>Total profit by discount bin: 0% 320987.6032, 1–20% 100785.4745, 21–30% −10369.2774, 31–50% −48447.7273, 51–80% −76559.0513 (mean line margin −1.138785 in the top bin).</li><li>Worst sub-category × discount cells: Binders 51–80% −38510.4964 (613 lines), Tables 31–50% −27295.8952 (122 lines), Machines 51–80% −19579.3191 (23 lines).</li><li>1871 of 9994 lines have negative profit.</li><li>By region × segment, the lowest profit is South Home Office (4620.6343) and the lowest margin is Central Consumer (0.033980, avg discount 0.252030).</li><li>By ship mode, margins range from 0.120812 (Standard Class) to 0.139345 (First Class).</li><li>20% discount cap counterfactual: 1393 lines affected; profit 286397.0217 → 505588.0159 (delta 219190.99420000002). Largest deltas: Binders 78342.6510, Machines 55815.5800, Tables 29500.4280.</li></ul>
+<p class="note">Numbers are taken directly from the notebook outputs.</p>
+<h2>Charts</h2>
+<figure><img src="profit_by_subcategory.png" alt="Net profit by sub-category" loading="lazy"><figcaption>Net profit by sub-category</figcaption></figure><figure><img src="profit_by_discount_bin.png" alt="Profit by discount bin (Binders, Machines, Tables, Appliances)" loading="lazy"><figcaption>Profit by discount bin (Binders, Machines, Tables, Appliances)</figcaption></figure>
+
+<h2>Notebook</h2>
+<p><a href="notebook.html">View the rendered notebook</a> with all saved outputs, or <a href="superstore_eda.ipynb" download>download the .ipynb</a>.</p>
+</main>
+<footer class="wrap"><p>Sergio Castillo · Data Analytics Portfolio</p></footer>
+</body>
+</html>
