@@ -1,0 +1,34 @@
+*,*::before,*::after{box-sizing:border-box}
+html{font-size:17px}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.6;color:#222;background:#fafafa}
+.wrap{max-width:46rem;margin:0 auto;padding:0 1.25rem}
+header.site{background:#fff;border-bottom:1px solid #e3e3e3}
+header.site .wrap{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.5rem 1.5rem;padding-top:.8rem;padding-bottom:.8rem}
+.brand{margin:0;font-weight:600}
+.brand a{color:#222;text-decoration:none}
+nav a{margin-right:1rem;color:#555;text-decoration:none;font-size:.92rem}
+nav a:last-child{margin-right:0}
+nav a:hover,nav a[aria-current=page]{color:#1f4e79;text-decoration:underline}
+main{padding-top:1.5rem;padding-bottom:2rem}
+h1{font-size:1.8rem;line-height:1.25;margin:.5rem 0 .5rem}
+h2{font-size:1.25rem;margin:2rem 0 .6rem;padding-bottom:.25rem;border-bottom:1px solid #e6e6e6}
+.card h2{border:0;margin:0 0 .5rem;padding:0}
+a{color:#1f4e79}
+.lede{color:#555;margin-top:0}
+.cards{display:grid;gap:1.25rem;margin-top:1.5rem}
+.card{background:#fff;border:1px solid #e3e3e3;border-radius:6px;padding:1.1rem 1.25rem}
+.card ul{padding-left:1.2rem;margin:.5rem 0}
+.q,.tools{margin:.3rem 0}
+.tools{color:#555;font-size:.95rem}
+.links{font-size:.92rem;margin:.6rem 0 0}
+code{font-family:SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:#f0f0f0;padding:.05em .3em;border-radius:3px}
+li{margin:.3rem 0}
+table{border-collapse:collapse;margin:.6rem 0;font-size:.92rem}
+th,td{border:1px solid #ddd;padding:.3rem .7rem;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{background:#f3f3f3}
+figure{margin:1.25rem 0}
+figure img{max-width:100%;height:auto;border:1px solid #e3e3e3;background:#fff}
+figcaption{font-size:.88rem;color:#666}
+.note{font-size:.88rem;color:#666}
+footer{border-top:1px solid #e3e3e3;color:#777;font-size:.85rem;padding-top:.5rem;padding-bottom:2rem}
