@@ -7796,20 +7796,6 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c2f27e92">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="03-%E2%80%94-Late-deliveries-(Olist)">03 — Late deliveries (Olist)<a class="anchor-link" href="#03-%E2%80%94-Late-deliveries-(Olist)">¶</a></h1><p><strong>Question:</strong> which origin→destination routes / seller areas miss the promised window most, and is lateness getting worse?</p>
-<p><strong>Late definition:</strong> <code>order_delivered_customer_date</code> &gt; <code>order_estimated_delivery_date</code>, <strong>delivered orders only</strong>.</p>
-<p><strong>Grain:</strong> one order in <code>olist_orders_dataset</code>; join sellers/customers for states.</p>
-<p>Notion: Project 03 — Late deliveries</p>
-</div>
-</div>
-</div>
-</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9e81f8be">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -7850,7 +7836,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[1]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>PosixPath('/Users/sergiocastillop/Desktop/analytics_practice/projects/03-late_deliveries')</pre>
+<pre>PosixPath('./03-late_deliveries')</pre>
 </div>
 </div>
 </div>
@@ -7921,7 +7907,7 @@ customers: (99441, 5)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3.-First-10-minute-profile-(orders)">3. First 10-minute profile (<code>orders</code>)<a class="anchor-link" href="#3.-First-10-minute-profile-(orders)">¶</a></h2><p>Write into Notion: shape, key dtypes, nulls on delivery date columns, value counts of <code>order_status</code>.</p>
+<h2 id="3.-First-10-minute-profile-(orders)">3. First 10-minute profile (<code>orders</code>)<a class="anchor-link" href="#3.-First-10-minute-profile-(orders)">¶</a></h2><p>Check: shape, key dtypes, nulls on delivery date columns, value counts of <code>order_status</code>.</p>
 </div>
 </div>
 </div>
@@ -8067,33 +8053,6 @@ overall late rate: 0.0811 (8.11%)
 late count: 7826
 </pre>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=43f843e4">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="5.-Notion-paste-(after-you-run-%C2%A73%E2%80%934)">5. Notion paste (after you run §3–4)<a class="anchor-link" href="#5.-Notion-paste-(after-you-run-%C2%A73%E2%80%934)">¶</a></h2><p>Fill Data toggles / First 10-min profile:</p>
-<ul>
-<li>Grain: one <strong>delivered</strong> order for the late flag</li>
-<li>Rows: orders / delivered / late-eligible (paste numbers)</li>
-<li>Nulls: missing delivery or estimate dates among delivered</li>
-<li>Sanity: overall late %</li>
-</ul>
-<p><strong>Decision log row:</strong> keep undelivered out of late rate; count missing dates before dropping.</p>
-<hr/>
-<h2 id="Next-(you-write-these-%E2%80%94-done-bar)">Next (you write these — done bar)<a class="anchor-link" href="#Next-(you-write-these-%E2%80%94-done-bar)">¶</a></h2><p>Do <strong>not</strong> skip to charts until overall late % is in Notion.</p>
-<ol>
-<li>SQL or pandas: late rate by <strong>customer_state → seller_state</strong> (or origin→destination — confirm which columns you use), top 15 by volume</li>
-<li>Late by seller state / top sellers with <strong>n</strong> visible</li>
-<li>Monthly late-rate trend chart</li>
-<li>Top late corridors chart</li>
-<li>Write-up: finding · caveat · ops rec</li>
-</ol>
 </div>
 </div>
 </div>
