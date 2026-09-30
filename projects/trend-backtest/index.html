@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trend Backtest · Sergio Castillo</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="site">
+<div class="wrap">
+<p class="brand"><a href="../../index.html">Sergio Castillo</a></p>
+<nav aria-label="Main"><a href="../../index.html">Home</a> <a href="../../projects/trend-backtest/index.html" aria-current="page">Trend Backtest</a> <a href="../../projects/late-deliveries/index.html">Late Deliveries (Olist)</a> <a href="../../projects/nyc-airbnb/index.html">NYC Airbnb 2019</a> <a href="../../projects/superstore/index.html">Superstore EDA</a></nav>
+</div>
+</header>
+<main class="wrap">
+<h1>Trend-following backtest: SPY, QQQ, GLD (2005–2025)</h1>
+<p class="links"><a href="#notebooks">Rendered notebooks</a> · <a href="reports/research_note.md">Research note</a> · <a href="README.md">Project README</a> · <a href="requirements.txt">requirements.txt</a></p>
+<h2>Question</h2>
+<p>Does a simple EMA crossover trend rule beat buy-and-hold after costs, and does an ML filter improve it?</p>
+<p><strong>Answer (from the README):</strong> No on both. On the untouched 2020–2025 test period, the tuned EMA 75/100 rule returned 7.2% a year on SPY vs 15.0% for buy-and-hold. It did cut the worst drawdown a little (-30.4% vs -33.7%). Neither ML model beat the always-up baseline, so the final rule has no filter.</p>
+<h2>Data</h2>
+<p>Daily prices for SPY, QQQ and GLD from 2005-01-03 to 2025-12-31, downloaded with <a href="https://github.com/ranaroussi/yfinance">yfinance</a> (Yahoo Finance): 5,283 rows per ticker, no nulls. Prices are stored in a local PostgreSQL database <code>trading</code> (table <code>prices</code>, primary key ticker + date), and backtest results are logged to a <code>backtest_runs</code> table. The rule uses adjusted close. The price data isn’t committed; running <code>01_load_data</code> downloads it again.</p>
+<h2>Methods and tools</h2>
+<p class="tools">Python, pandas, NumPy, yfinance, PostgreSQL, SQLAlchemy, scikit-learn, matplotlib</p>
+<ul>
+<li><strong>Rule:</strong> long when EMA(fast) &gt; EMA(slow) on adjusted close, otherwise cash. The signal is shifted one day so every trade uses yesterday’s information (no look-ahead).</li>
+<li><strong>Costs:</strong> 0.05% per trade, included in every number. <strong>Warm-up:</strong> the first 200 trading days are skipped so the EMAs are valid.</li>
+<li><strong>Baseline (Phase 1):</strong> EMA 50/200 vs buy-and-hold over the full period.</li>
+<li><strong>Tuning (Phase 2):</strong> a grid of 29 EMA pairs tested on 2005–2019 only, plus a yearly walk-forward over 2010–2019. The chosen pair was locked before touching the test period.</li>
+<li><strong>ML filter (Phase 3):</strong> 7 backward-looking features (RSI14, MACD histogram / price, 5-day return, 60-day return, 20-day volatility, distance from EMA200, volume ratio). Target: SPY up over the next 5 days. Trained on 2005–2015, validated on 2016–2019, with logistic regression and a random forest.</li>
+<li><strong>Test (2020–2025):</strong> run once, after every choice above was locked.</li>
+</ul>
+<h2>Results (test period 2020–2025, run once, costs included)</h2>
+<table><thead><tr><th>Ticker</th><th>Rule CAGR</th><th>Rule Sharpe</th><th>Rule Max DD</th><th>B&amp;H CAGR</th><th>B&amp;H Sharpe</th><th>B&amp;H Max DD</th></tr></thead><tbody><tr><td>SPY</td><td>7.2%</td><td>0.52</td><td>-30.4%</td><td>15.0%</td><td>0.78</td><td>-33.7%</td></tr><tr><td>QQQ</td><td>19.6%</td><td>1.00</td><td>-28.6%</td><td>20.1%</td><td>0.85</td><td>-35.1%</td></tr><tr><td>GLD</td><td>15.1%</td><td>1.02</td><td>-24.8%</td><td>18.6%</td><td>1.13</td><td>-22.0%</td></tr></tbody></table>
+<p class="note">Rule = EMA 75/100 long-or-cash. B&amp;H = buy-and-hold. From the README; matches the final-test output in <code>04_ml_filter</code>.</p>
+<h2>Key findings</h2>
+<ul>
+<li>On SPY the tuned rule lost to buy-and-hold on the test period: <strong>7.2%</strong> vs <strong>15.0%</strong> CAGR, Sharpe 0.52 vs 0.78, with a slightly smaller max drawdown (-30.4% vs -33.7%).</li>
+<li>The rule beat buy-and-hold on a risk-adjusted basis only on QQQ (Sharpe 1.00 vs 0.85), which is 1 of 3 tickers. The research note flags that, with 29 parameter pairs tried, that win could be luck.</li>
+<li>Baseline EMA 50/200 over the full period: 7.9% CAGR, 0.61 Sharpe, -33.9% max drawdown, vs buy-and-hold 11.1%, 0.64, -55.2% (21 trades, 79.3% time in market).</li>
+<li>Tuning: EMA 75/100 was best in-sample on 2005–2019 (Sharpe 0.79). Walk-forward picked it in 8 of 10 years. Over 2010–2019 the walk-forward Sharpe was 0.734 vs 0.689 for fixed 50/200 and 0.933 for buy-and-hold.</li>
+<li>ML filter: on the 2016–2019 validation period, logistic regression and random forest both scored <strong>63.5%</strong> accuracy vs a <strong>64.1%</strong> always-up baseline (logistic regression predicted “up” on 99.4% of days), so the filter was dropped.</li>
+<li>From the research note: the rule protects in slow bear markets (in 2008 it limited the worst drop to about 11% while buy-and-hold fell 55%) but fails in fast, V-shaped crashes like 2020, where it rode the market down about 33% and bought back in late.</li>
+<li>Conclusion in the research note: he would not paper-trade it, because it doesn’t beat a simple buy-and-hold on SPY after costs.</li>
+</ul>
+<h2>Limitations (from the README)</h2>
+<ul>
+<li>Testing 29 pairs invites overfitting (the multiple-testing problem). The walk-forward and the one-time test period reduce this but don’t remove it.</li>
+<li>The costs are a flat estimate. Slippage, taxes, and cash yield aren’t modeled.</li>
+<li>There are only three tickers, one rule family, and one test period.</li>
+</ul>
+<h2>Charts</h2>
+<figure><img src="equity_ema50_200_vs_bh.png" alt="SPY: EMA 50/200 vs buy-and-hold (growth of $1, log scale), 02_baseline" loading="lazy"><figcaption>SPY: EMA 50/200 vs buy-and-hold (growth of $1, log scale), 02_baseline</figcaption></figure><figure><img src="drawdown_ema50_200_vs_bh.png" alt="Drawdown: EMA 50/200 vs buy-and-hold, 02_baseline" loading="lazy"><figcaption>Drawdown: EMA 50/200 vs buy-and-hold, 02_baseline</figcaption></figure><figure><img src="sharpe_heatmap_tuning.png" alt="Sharpe by EMA pair, tuning period 2005–2019, 03_tuning" loading="lazy"><figcaption>Sharpe by EMA pair, tuning period 2005–2019, 03_tuning</figcaption></figure>
+<h2 id="notebooks">Notebooks</h2>
+<table><thead><tr><th>Notebook</th><th>What it does</th><th>Links</th></tr></thead><tbody>
+<tr><td>01_load_data</td><td>Download daily prices for SPY, QQQ, GLD with yfinance and load them into Postgres<br><span class="note">8 code cells, 6 with outputs, 0 charts</span></td><td><a href="notebooks/01_load_data.html">Rendered</a> · <a href="notebooks/01_load_data.ipynb" download>.ipynb</a></td></tr><tr><td>02_baseline</td><td>EMA 50/200 vs buy-and-hold, equity and drawdown charts<br><span class="note">7 code cells, 3 with outputs, 2 charts</span></td><td><a href="notebooks/02_baseline.html">Rendered</a> · <a href="notebooks/02_baseline.ipynb" download>.ipynb</a></td></tr><tr><td>03_tuning</td><td>EMA grid on 2005–2019, Sharpe heatmap, walk-forward, locking the tuned pair<br><span class="note">10 code cells, 5 with outputs, 1 chart</span></td><td><a href="notebooks/03_tuning.html">Rendered</a> · <a href="notebooks/03_tuning.ipynb" download>.ipynb</a></td></tr><tr><td>04_ml_filter</td><td>Features, logistic regression / random forest filter test, final 2020–2025 backtest<br><span class="note">10 code cells, 6 with outputs, 0 charts</span></td><td><a href="notebooks/04_ml_filter.html">Rendered</a> · <a href="notebooks/04_ml_filter.ipynb" download>.ipynb</a></td></tr>
+</tbody></table>
+<p>Full write-up: <a href="reports/research_note.md">research note</a>. How to rerun (Python 3.10+, local PostgreSQL, password in <code>~/.pgpass</code>): see the <a href="README.md">project README</a> and <a href="requirements.txt">requirements.txt</a>.</p>
+</main>
+<footer class="wrap"><p>Sergio Castillo · Data Analytics Portfolio</p></footer>
+</body>
+</html>
