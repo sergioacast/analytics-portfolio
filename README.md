@@ -6,6 +6,18 @@ Data analyst working in Python and SQL/PostgreSQL.
 
 ## Projects
 
+### [EURUSD Intraday](projects/eurusd-intraday/)
+
+Two intraday EURUSD strategies, specified before coding and backtested bar-by-bar after spreads. Neither survives costs; the only edge (Asia-session mean reversion) is smaller than the spread, and an ML filter didn't help.
+
+**Tools:** Python, pandas, NumPy, PostgreSQL, SQLAlchemy, scikit-learn, matplotlib
+
+- Strategy A (London breakout), final 2024–25 test: **−0.18 R** per trade after costs on 343 trades (+0.00 before costs).
+- Strategy B (Asia mean reversion), final EURUSD test: **+0.05 R** on 179 trades, inside its ±0.06 noise band; the same settings on GBPUSD gave **−0.10 R** on 165 trades.
+- ML filter: logistic regression’s validation gain (+0.08 R) came from only 51 trades with noise of about ±0.14, so no filter was adopted.
+
+[Project README](projects/eurusd-intraday/README.md) · [Verdict](projects/eurusd-intraday/reports/verdict.md) · [Strategy specs](projects/eurusd-intraday/reports/strategy_specs.md) · [Notebooks](projects/eurusd-intraday/notebooks/) · [Live page](https://sergioacast.github.io/analytics-portfolio/projects/eurusd-intraday/)
+
 ### [Trend Backtest](projects/trend-backtest/)
 
 **Question:** Does a simple EMA crossover trend rule on SPY, QQQ and GLD beat buy-and-hold after costs (2005–2025), and does an ML filter improve it?
@@ -62,4 +74,4 @@ style.css             shared stylesheet
 projects/<slug>/      project page, README, rendered notebook(s), .ipynb, charts
 ```
 
-Datasets are not included (see each project’s Kaggle link); `*.csv` is git-ignored.
+Datasets are not included (see each project’s data source link); `*.csv` is git-ignored.

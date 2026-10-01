@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EURUSD Intraday: strategy specs · Sergio Castillo</title>
+<link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<header class="site">
+<div class="wrap">
+<p class="brand"><a href="../../../index.html">Sergio Castillo</a></p>
+<nav aria-label="Main"><a href="../../../index.html">Home</a> <a href="../../../projects/eurusd-intraday/index.html" aria-current="page">EURUSD Intraday</a> <a href="../../../projects/trend-backtest/index.html">Trend Backtest</a> <a href="../../../projects/late-deliveries/index.html">Late Deliveries (Olist)</a> <a href="../../../projects/nyc-airbnb/index.html">NYC Airbnb 2019</a> <a href="../../../projects/superstore/index.html">Superstore EDA</a></nav>
+</div>
+</header>
+<main class="wrap">
+<p class="links"><a href="../index.html">← EURUSD Intraday project page</a> · <a href="strategy_specs.md">Source (.md)</a></p>
+<h1>Strategy specs (locked before coding: 2026-09-30)</h1>
+<p>All times UTC. Pair: EURUSD. Bars are stamped with their start time; a bar's close is known only at bar start + bar length.
+Signals use completed bars only and fill at the NEXT bar's open.</p>
+<h2>Common rules (both strategies)</h2>
+<ul>
+<li>Costs: 1.0 pip spread + 0.2 pip slippage per side, so 1.4 pips per round trip, charged on every trade.</li>
+<li>Position size: risk 1% of equity per trade (size = 1% of equity / stop distance).</li>
+<li>One position at a time per strategy. No trades from Friday 20:00 UTC (weekend gap risk).</li>
+<li>Same-bar rule: if a bar touches both the stop and the target, assume the STOP hit first (worst case).</li>
+<li>Excluded data: Mar-Jul 2023 (bad_period flag).</li>
+<li>Data split: 2015-2021 build and tune, 2022-2023 validation, 2024-2025 final test (used once).</li>
+</ul>
+<h2>Strategy A: London breakout (trend)</h2>
+<p>Idea: the Asia session builds a quiet range; London often breaks it with momentum.</p>
+<ul>
+<li>Timeframe: 15m bars.</li>
+<li>Range: high and low of the 00:00-07:00 UTC bars (Asia session).</li>
+<li>Skip the day if the range is wider than 1.5 x the 1h ATR(14) at 07:00 (the move already happened) or narrower than 10 pips (noise).</li>
+<li>Entry: first 15m bar between 07:00 and 11:00 UTC that CLOSES above the Asia high, so go long at the next bar's open; closes below the Asia low, so go short.</li>
+<li>Max one trade per day.</li>
+<li>Stop-loss: 1.0 x ATR(14, 1h) from entry.</li>
+<li>Take-profit: 2.0 x ATR(14, 1h) from entry.</li>
+<li>Time exit: close at 16:00 UTC if neither is hit.</li>
+<li>Correction (before tuning, 2026-09-30): range filter changed from 1.5x 1h ATR to the 80th percentile of the trailing 60 days' Asia ranges (prior days only); the original rejected 93% of days (1,672 of ~1,800) because of a scale mismatch.</li>
+</ul>
+<h2>Strategy B: Bollinger mean reversion (quiet session)</h2>
+<p>Idea: in quiet hours, stretched moves tend to snap back to the average.</p>
+<ul>
+<li>Timeframe: 1h bars.</li>
+<li>Bands: 20-bar moving average of close +/- 2 standard deviations.</li>
+<li>Only trade during Asia hours (00:00-07:00 UTC entries).</li>
+<li>Entry: bar closes below the lower band, so go long at the next bar's open; closes above the upper band, so go short.</li>
+<li>Skip if ATR(14) is in the top 20% of its trailing 60-day values (a trending, volatile market, where fading is dangerous).</li>
+<li>Stop-loss: 1.5 x ATR(14) from entry.</li>
+<li>Take-profit: the 20-bar moving average at the time of entry (fixed price).</li>
+<li>Time exit: close after 8 bars if neither is hit.</li>
+</ul>
+<h2>Parameters allowed to be tuned later (on 2015-2021 only)</h2>
+<ul>
+<li>A: stop multiple {0.75, 1.0, 1.5}, target multiple {1.5, 2.0, 3.0}</li>
+<li>B: band width {1.5, 2.0, 2.5}, stop multiple {1.0, 1.5, 2.0}
+Everything else stays fixed.</li>
+</ul>
+
+</main>
+<footer class="wrap"><p>Sergio Castillo · Data Analytics Portfolio</p></footer>
+</body>
+</html>

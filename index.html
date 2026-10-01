@@ -10,13 +10,20 @@
 <header class="site">
 <div class="wrap">
 <p class="brand"><a href="index.html">Sergio Castillo</a></p>
-<nav aria-label="Main"><a href="index.html" aria-current="page">Home</a> <a href="projects/trend-backtest/index.html">Trend Backtest</a> <a href="projects/late-deliveries/index.html">Late Deliveries (Olist)</a> <a href="projects/nyc-airbnb/index.html">NYC Airbnb 2019</a> <a href="projects/superstore/index.html">Superstore EDA</a></nav>
+<nav aria-label="Main"><a href="index.html" aria-current="page">Home</a> <a href="projects/eurusd-intraday/index.html">EURUSD Intraday</a> <a href="projects/trend-backtest/index.html">Trend Backtest</a> <a href="projects/late-deliveries/index.html">Late Deliveries (Olist)</a> <a href="projects/nyc-airbnb/index.html">NYC Airbnb 2019</a> <a href="projects/superstore/index.html">Superstore EDA</a></nav>
 </div>
 </header>
 <main class="wrap">
 <h1>Sergio Castillo — Data Analytics Portfolio</h1>
 <p class="lede">Data analyst working in Python and SQL/PostgreSQL.</p>
 <section class="cards">
+<article class="card">
+<h2><a href="projects/eurusd-intraday/index.html">EURUSD Intraday</a></h2>
+<p class="q">Two intraday EURUSD strategies, specified before coding and backtested bar-by-bar after spreads. Neither survives costs; the only edge (Asia-session mean reversion) is smaller than the spread, and an ML filter didn&#x27;t help.</p>
+<p class="tools"><strong>Tools:</strong> Python, pandas, NumPy, PostgreSQL, SQLAlchemy, scikit-learn, matplotlib</p>
+<ul><li>Strategy A (London breakout), final 2024–25 test: <strong>−0.18 R</strong> per trade after costs on 343 trades (+0.00 before costs).</li><li>Strategy B (Asia mean reversion), final EURUSD test: <strong>+0.05 R</strong> on 179 trades, inside its ±0.06 noise band; the same settings on GBPUSD gave <strong>−0.10 R</strong> on 165 trades.</li><li>ML filter: logistic regression’s validation gain (+0.08 R) came from only 51 trades with noise of about ±0.14, so no filter was adopted.</li></ul>
+<p class="links"><a href="projects/eurusd-intraday/index.html">Project page</a> · <a href="projects/eurusd-intraday/index.html#notebooks">Rendered notebooks</a> · <a href="projects/eurusd-intraday/reports/strategy_specs.html">Strategy specs</a></p>
+</article>
 <article class="card">
 <h2><a href="projects/trend-backtest/index.html">Trend Backtest</a></h2>
 <p class="q"><strong>Question:</strong> Does a simple EMA crossover trend rule on SPY, QQQ and GLD beat buy-and-hold after costs (2005–2025), and does an ML filter improve it?</p>

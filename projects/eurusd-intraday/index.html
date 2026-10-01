@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EURUSD Intraday · Sergio Castillo</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="site">
+<div class="wrap">
+<p class="brand"><a href="../../index.html">Sergio Castillo</a></p>
+<nav aria-label="Main"><a href="../../index.html">Home</a> <a href="../../projects/eurusd-intraday/index.html" aria-current="page">EURUSD Intraday</a> <a href="../../projects/trend-backtest/index.html">Trend Backtest</a> <a href="../../projects/late-deliveries/index.html">Late Deliveries (Olist)</a> <a href="../../projects/nyc-airbnb/index.html">NYC Airbnb 2019</a> <a href="../../projects/superstore/index.html">Superstore EDA</a></nav>
+</div>
+</header>
+<main class="wrap">
+<p class="links"><a href="README.md">Project README</a> · <a href="reports/strategy_specs.html">Strategy specs</a> · <a href="#notebooks">Notebooks</a> · <a href="reports/verdict.md">Verdict (.md source)</a> · <a href="requirements.txt">requirements.txt</a></p>
+<h1>EURUSD Intraday Strategy Lab: Verdict</h1>
+<p><strong>Bottom line:</strong> Neither strategy makes money after spreads. The only hint of an edge (mean reversion in the quiet Asia session) is smaller than the cost of trading it, and an ML filter did not change that. Recommendation: do not trade either strategy.</p>
+<h2>What was tested</h2>
+<ul>
+<li><strong>Data:</strong> EURUSD and GBPUSD 1-minute bars, 2015–2025 (HistData), converted to UTC and rolled up into 15m and 1h bars. Mar–Jul 2023 was excluded for both pairs because London and New York hours were about 50% missing.</li>
+<li><strong>Rules written before coding</strong> (<code>reports/strategy_specs.md</code>): fills at the next bar's open, 1.4 pips round-trip cost, 1% risk per trade, and stop checked first when one bar touches both stop and target.</li>
+<li><strong>Data split:</strong> build 2015–2021, validation 2022–2023, final test 2024–2025, used once.</li>
+<li><strong>Strategy A, London breakout (15m):</strong> trade a 07:00–11:00 UTC close outside the Asia range, with stop 1×ATR, target 2×ATR, and an exit at 16:00 UTC.</li>
+<li><strong>Strategy B, Asia mean reversion (1h):</strong> fade a close outside the Bollinger band between 00:00 and 06:00 UTC, with the target at the 20-bar average and an 8-bar limit. After tuning, the locked setup was band 1.5 and stop 2.0×ATR.</li>
+<li><strong>Backtester checks:</strong> passed all 7 edge-case tests, including the same-bar stop and target case, gaps through the stop, and the time exit.</li>
+</ul>
+<h2>Results (R = profit per trade in units of the risked amount, after costs)</h2>
+<table>
+<thead>
+<tr>
+  <th>Test</th>
+  <th>Trades</th>
+  <th>Avg R</th>
+  <th>± noise</th>
+  <th>Avg R before costs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A, EURUSD 2015–21 (build)</td>
+  <td>1,267</td>
+  <td>−0.20</td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td>A, EURUSD 2024–25 (<strong>final</strong>)</td>
+  <td>343</td>
+  <td><strong>−0.18</strong></td>
+  <td>0.08</td>
+  <td>+0.00</td>
+</tr>
+<tr>
+  <td>B, EURUSD 2015–21 (build, tuned)</td>
+  <td>532</td>
+  <td>−0.03</td>
+  <td></td>
+  <td>+0.03</td>
+</tr>
+<tr>
+  <td>B, EURUSD 2024–25 (<strong>final</strong>)</td>
+  <td>179</td>
+  <td><strong>+0.05</strong></td>
+  <td>0.06</td>
+  <td>+0.12</td>
+</tr>
+<tr>
+  <td>B, GBPUSD 2024–25 (no retune)</td>
+  <td>165</td>
+  <td><strong>−0.10</strong></td>
+  <td>0.06</td>
+  <td>−0.05</td>
+</tr>
+<tr>
+  <td>B, GBPUSD 2015–23 (no retune)</td>
+  <td>586</td>
+  <td>−0.07</td>
+  <td>0.03</td>
+  <td>−0.02</td>
+</tr>
+</tbody>
+</table>
+<h3>Strategy A: rejected</h3>
+<ul>
+<li>It lost in every build year after costs, and in 6 of 7 years even before costs.</li>
+<li>All 9 stop and target combinations lost; the best was −0.14 R.</li>
+<li>On the final test it lost again (−0.18 R) and was flat before costs.</li>
+<li>In short, the breakout has no edge, and costs make it a steady loser.</li>
+</ul>
+<h3>Strategy B: no tradeable edge</h3>
+<ul>
+<li>All 9 settings lost after costs in the build period.</li>
+<li>The final EURUSD test came out slightly positive (+0.05 R), but that sits inside its noise band (±0.06). Almost all of it came from 2024 (+0.10); 2025 was +0.01.</li>
+<li>It failed on GBPUSD without retuning (−0.10 R), where it was negative even before costs.</li>
+<li>A result that disappears on the closest similar pair is most likely luck, not an edge.</li>
+<li>Cost sensitivity on EURUSD 2024–25: +0.07 R at 1.0 pip, +0.05 at 1.4, and +0.02 at 2.0.</li>
+</ul>
+<h2>Where the edge lives (sessions)</h2>
+<p>Running B's logic in each session on 2015–2021, average R before costs was:</p>
+<ul>
+<li>Asia: +0.032 (noise ±0.035)</li>
+<li>Late: +0.020</li>
+<li>London: +0.006</li>
+<li>Overlap: −0.011</li>
+<li>New York: −0.018</li>
+</ul>
+<p>After costs, every session was negative, between −0.03 and −0.07. Mean reversion only shows up in the quiet hours, when prices drift back to their average, but the move is smaller than the spread.</p>
+<h2>Did ML help? No</h2>
+<ul>
+<li><strong>Setup:</strong> a meta-labeling filter on B's trades (506 trades, 2015–2023). It used 7 features known at signal time and a year-by-year walk-forward from 2017.</li>
+<li><strong>Logistic regression:</strong> threshold 0.55 was best on build (−0.007 R). On validation it showed +0.08 R, but over only 51 trades, with noise of about ±0.14. Threshold 0.50 gave −0.06 R on validation.</li>
+<li><strong>Random forest:</strong> did not help.</li>
+<li><strong>Verdict:</strong> no filter was adopted, and none was used in the final test.</li>
+</ul>
+<h2>Risk check (Monte Carlo)</h2>
+<ul>
+<li><strong>Build and validation (2015–2023):</strong> I shuffled the order of B's 654 trades 1,000 times at 1% risk per trade. The worst drop from a peak was −29.5% in a typical run and −37% in the unluckiest 5% of runs. The account ended down 21% whatever the order. Chart: <code>reports/monte_carlo_dd.png</code>.</li>
+<li><strong>Final-test trades (2024–25):</strong> typical worst drop −8.3%, unluckiest 5% −12.5%, final equity +8.6%.</li>
+</ul>
+<h2>Caveats</h2>
+<ul>
+<li>The costs are a flat 1.4 pips. Real spreads widen at night and around news, which would make B worse, since it trades in the Asia hours.</li>
+<li>HistData has no bid/ask quotes, so fills are mid-price plus a cost. Dukascopy bid/ask data would be the next upgrade.</li>
+<li>Mar–Jul 2023 is missing.</li>
+<li>No swap (overnight financing) costs; most trades close the same day.</li>
+</ul>
+<h2>What would change the verdict</h2>
+<p>Only a cheaper way to execute would change it: about 1 pip less cost would push B's build-period result to roughly breakeven. Alternatively, a new idea could be specified fresh and tested on data not used here. Re-tuning B on 2024–2025 would just be fitting to noise.</p>
+
+<hr>
+<h2>Data</h2>
+<p>1-minute EURUSD and GBPUSD bars, 2015–2025, from <a href="https://www.histdata.com/">HistData</a>. Notebook 01 loads EURUSD into a local PostgreSQL database (<code>trading</code>, table <code>fx_m1</code>); notebook 08 loads GBPUSD the same way. The raw CSVs are not included in this repository.</p>
+<h2>Rules</h2>
+<p>The rules were written down before any strategy code: <a href="reports/strategy_specs.html">strategy specs</a> (<a href="reports/strategy_specs.md">.md source</a>).</p>
+<h2>Charts</h2>
+<figure><img src="reports/monte_carlo_dd.png" alt="Histogram of maximum drawdown over 1,000 reshuffles of Strategy B's 2015–2023 trade order at 1% risk per trade" loading="lazy"><figcaption>Strategy B, 2015–2023: maximum drawdown across 1,000 reshuffles of trade order at 1% risk per trade, with the actual order and the worst 5% marked (notebook 08). This is the only chart in the notebooks.</figcaption></figure>
+<h2 id="notebooks">Notebooks</h2>
+<table><thead><tr><th>Notebook</th><th>What it does</th><th>Links</th></tr></thead><tbody>
+<tr><td>01_load_data</td><td>Reads the EURUSD M1 CSVs, converts them to UTC, removes duplicates, loads them into Postgres (fx_m1), checks coverage and flags Mar–Jul 2023<br><span class="note">9 code cells, 9 with outputs</span></td><td><a href="notebooks/01_load_data.html">Rendered</a> · <a href="notebooks/01_load_data.ipynb" download>.ipynb</a></td></tr><tr><td>02_bars</td><td>Builds 15m and 1h bars with ATR(14) and session labels (fx_bars)<br><span class="note">4 code cells, 4 with outputs</span></td><td><a href="notebooks/02_bars.html">Rendered</a> · <a href="notebooks/02_bars.ipynb" download>.ipynb</a></td></tr><tr><td>03_backtester</td><td>simulate_trade() and its 7 edge-case tests<br><span class="note">3 code cells, 1 with outputs</span></td><td><a href="notebooks/03_backtester.html">Rendered</a> · <a href="notebooks/03_backtester.ipynb" download>.ipynb</a></td></tr><tr><td>04_strategy_a</td><td>Strategy A (London breakout): build-period run and 9-cell stop/target grid<br><span class="note">8 code cells, 6 with outputs</span></td><td><a href="notebooks/04_strategy_a.html">Rendered</a> · <a href="notebooks/04_strategy_a.ipynb" download>.ipynb</a></td></tr><tr><td>05_strategy_b</td><td>Strategy B (Asia mean reversion): build-period run and 9-cell band/stop grid<br><span class="note">6 code cells, 4 with outputs</span></td><td><a href="notebooks/05_strategy_b.html">Rendered</a> · <a href="notebooks/05_strategy_b.ipynb" download>.ipynb</a></td></tr><tr><td>06_ml_filter</td><td>Meta-labeling filter on Strategy B trades: logistic regression and random forest, walk-forward by year<br><span class="note">6 code cells, 4 with outputs</span></td><td><a href="notebooks/06_ml_filter.html">Rendered</a> · <a href="notebooks/06_ml_filter.ipynb" download>.ipynb</a></td></tr><tr><td>07_sessions</td><td>Strategy B’s logic run in each trading session, 2015–2021<br><span class="note">5 code cells, 2 with outputs</span></td><td><a href="notebooks/07_sessions.html">Rendered</a> · <a href="notebooks/07_sessions.ipynb" download>.ipynb</a></td></tr><tr><td>08_robustness</td><td>GBPUSD load, Monte Carlo reshuffle, and the one-time 2024–2025 final test<br><span class="note">13 code cells, 10 with outputs, 1 chart</span></td><td><a href="notebooks/08_robustness.html">Rendered</a> · <a href="notebooks/08_robustness.ipynb" download>.ipynb</a></td></tr>
+</tbody></table>
+<p>How to rerun: see the <a href="README.md">project README</a>, <a href="requirements.txt">requirements.txt</a> and <a href="pyproject.toml">pyproject.toml</a>.</p>
+</main>
+<footer class="wrap"><p>Sergio Castillo · Data Analytics Portfolio</p></footer>
+</body>
+</html>
