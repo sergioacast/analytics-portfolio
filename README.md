@@ -8,7 +8,7 @@ Data analyst working in Python and SQL/PostgreSQL.
 
 ### [EURUSD Intraday](projects/eurusd-intraday/)
 
-Two intraday EURUSD strategies, specified before coding and backtested bar-by-bar after spreads. Neither survives costs; the only edge (Asia-session mean reversion) is smaller than the spread, and an ML filter didn't help.
+Two intraday EURUSD strategies, specified before coding and backtested bar-by-bar after spreads. Neither survives costs; the only hint of an edge (Asia-session mean reversion) is smaller than the spread, and an ML filter didn't help.
 
 **Tools:** Python, pandas, NumPy, PostgreSQL, SQLAlchemy, scikit-learn, matplotlib
 

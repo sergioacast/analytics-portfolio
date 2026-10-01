@@ -1,6 +1,6 @@
 # EURUSD Intraday Strategy Lab
 
-**Do intraday EURUSD strategies make money after spreads? No.** I wrote down two strategies before coding them. I tested them with a bar-by-bar backtester that assumes the worst case when a bar touches both the stop and the target, then ran them on a final 2024–2025 period that I used only once. Neither strategy survives a 1.4-pip trading cost. The only real edge, mean reversion in the quiet Asia session, is smaller than the spread, and a machine-learning filter didn't fix that.
+**Do intraday EURUSD strategies make money after spreads? No.** I wrote down two strategies before coding them. I tested them with a bar-by-bar backtester that assumes the worst case when a bar touches both the stop and the target, then ran them on a final 2024–2025 period that I used only once. Neither strategy survives a 1.4-pip trading cost. The only hint of an edge, mean reversion in the quiet Asia session, is not statistically clear and is smaller than the spread, and a machine-learning filter didn't fix that.
 
 Full write-up: [`reports/verdict.md`](reports/verdict.md)
 

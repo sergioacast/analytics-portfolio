@@ -1,3 +1,5 @@
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["."]
+[project]
+name = "eurusd-intraday"
+version = "1.0.0"
+description = "EURUSD intraday strategy lab: two specified-before-coding strategies, bar-by-bar backtest after spreads, ML meta-labeling, final out-of-sample test."
+requires-python = ">=3.13"

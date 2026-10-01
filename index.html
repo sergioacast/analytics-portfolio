@@ -19,7 +19,7 @@
 <section class="cards">
 <article class="card">
 <h2><a href="projects/eurusd-intraday/index.html">EURUSD Intraday</a></h2>
-<p class="q">Two intraday EURUSD strategies, specified before coding and backtested bar-by-bar after spreads. Neither survives costs; the only edge (Asia-session mean reversion) is smaller than the spread, and an ML filter didn&#x27;t help.</p>
+<p class="q">Two intraday EURUSD strategies, specified before coding and backtested bar-by-bar after spreads. Neither survives costs; the only hint of an edge (Asia-session mean reversion) is smaller than the spread, and an ML filter didn&#x27;t help.</p>
 <p class="tools"><strong>Tools:</strong> Python, pandas, NumPy, PostgreSQL, SQLAlchemy, scikit-learn, matplotlib</p>
 <ul><li>Strategy A (London breakout), final 2024–25 test: <strong>−0.18 R</strong> per trade after costs on 343 trades (+0.00 before costs).</li><li>Strategy B (Asia mean reversion), final EURUSD test: <strong>+0.05 R</strong> on 179 trades, inside its ±0.06 noise band; the same settings on GBPUSD gave <strong>−0.10 R</strong> on 165 trades.</li><li>ML filter: logistic regression’s validation gain (+0.08 R) came from only 51 trades with noise of about ±0.14, so no filter was adopted.</li></ul>
 <p class="links"><a href="projects/eurusd-intraday/index.html">Project page</a> · <a href="projects/eurusd-intraday/index.html#notebooks">Rendered notebooks</a> · <a href="projects/eurusd-intraday/reports/strategy_specs.html">Strategy specs</a></p>
